@@ -15,7 +15,7 @@ function getConfigurationByFile(file) {
 module.exports = {
   viewportWidth: 2000,
   viewportHeight: 900,
-  defaultCommandTimeout: 90000,
+  defaultCommandTimeout: 1000,
   chromeWebSecurity: false,
   ...(on, config) => {
     // accept a configFile value or use development by default

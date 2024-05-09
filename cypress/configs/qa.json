@@ -1,5 +1,7 @@
 {
-  "baseUrl": "https://www.google.com",
+  "baseUrl": "https://automationpratice.com.br/",
+  "email": "email@email.com",
+  "password": "password123",
   "env": {
     "enviroment": "qa"
   }

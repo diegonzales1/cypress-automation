@@ -14,4 +14,4 @@ Projeto utiliza o intepretador em node, Java Script e framework Cypress.
 
 # Build and Test
 
-- Automação da plataforma QAZANDO Shop E-Commerce
+- Automação da plataforma BordPRO

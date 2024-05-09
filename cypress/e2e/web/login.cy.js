@@ -4,6 +4,7 @@ const env = Cypress.env('configFile')
 const config = require(`../../configs/${env}.json`)
 
 describe('Funcionalidade: Login', () => {
+
   beforeEach('', () => {
     cy.visit(config.baseUrl)
     cy.title('QAZANDO Shop E-Commerce')
@@ -14,6 +15,7 @@ describe('Funcionalidade: Login', () => {
   context('Validações dos campos de login', () => {
     it('1- Validar campos existentes para o login', () => {
       cy.get('.account_form').within(() => {
+
         // Valida Existencia dos campos Email e Senha
         cy.get('.default-form-box').eq(0).contains('E-mail').next().should('be.empty')
         cy.get('.default-form-box').eq(1).contains('Senha').next().should('be.empty')
@@ -21,9 +23,7 @@ describe('Funcionalidade: Login', () => {
         cy.get('.login_submit').should('be.visible')
         cy.get('.form-check input[type="checkbox"]').should('not.be.checked')
         cy.get('.form-check-label').should('contain', 'Lembrar de mim')
-        cy.get('#createAccount')
-          .should('contain.text', 'Ainda não tem conta?')
-          .should('have.attr', 'href')
+        cy.get('#createAccount').should('contain.text', 'Ainda não tem conta?').should('have.attr', 'href')
       })
     })
 
@@ -31,12 +31,11 @@ describe('Funcionalidade: Login', () => {
       cy.get('#user').type(config.email).should('have.value', config.email)
       cy.get('#password').type(config.password, { log: false })
       cy.get('.login_submit').click()
-      cy.get('.swal2-popup')
-        .should('be.visible')
-        .within(($popUp) => {
-          cy.get($popUp).should('contain', 'Login realizado')
-          cy.get($popUp).should('contain', `Olá, ${config.email}`)
-        })
+      cy.get('.swal2-popup').should('be.visible').within(($popUp) => {
+        cy.get($popUp).should('contain', 'Login realizado')
+        cy.get($popUp).should('contain', `Olá, ${config.email}`)
+      })
+
     })
   })
 
@@ -53,6 +52,7 @@ describe('Funcionalidade: Login', () => {
         cy.get('#user').type(config.email).should('have.value', config.email)
         cy.get('#btnLogin').click()
         cy.get($form).should('contain', 'Senha inválida')
+
       })
     })
   })

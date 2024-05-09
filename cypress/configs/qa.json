@@ -1,0 +1,6 @@
+{
+  "baseUrl": "https://www.google.com",
+  "env": {
+    "enviroment": "qa"
+  }
+}

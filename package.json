@@ -1,0 +1,77 @@
+{
+  "name": "AUTOMAÇÃO ESTRUTURA",
+  "version": "1.0.0",
+  "license": "ISC",
+  "main": "index.js",
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/git-cz"
+    }
+  },
+  "scripts": {
+    "prepare": "husky install",
+    "precommit": "git add . && lint-staged",
+    "commit": "git cz && node .husky/push.js",
+    "format": "prettier --write . --loglevel silent",
+    "lint": "eslint . --ext .js --ignore-path .gitignore",
+    "open:qa": "cypress open --env configFile=qa",
+    "open:uat": "cypress open --env configFile=uat",
+    "cy:run:chrome": "cypress run --browser chrome",
+    "cy:run:firefox": "cypress run --browser firefox",
+    "cypress:run": "cypress run",
+    "junit:report": "cypress run --reporter junit",
+    "allure": "cypress run --env allure=true",
+    "allure:report": "allure generate allure-results --clean -o allure-report",
+    "allure:open": "allure open allure-report"
+  },
+  "lint-staged": {
+    "cypress/**/*.(spec|js)": [
+      "prettier --write .",
+      "eslint . --ext .js --ignore-path .gitignore",
+      "git add ."
+    ]
+  },
+  "testFiles": [
+    "api",
+    "web"
+  ],
+  "dependencies": {
+    "@shelex/cypress-allure-plugin": "^2.26.5",
+    "adm-zip": "^0.5.9",
+    "axios": "^0.24.0",
+    "cnpj": "^4.0.1",
+    "dotenv": "^16.0.0",
+    "drag-drop": "^7.2.0",
+    "@faker-js/faker": "^8.4.1",
+    "cypress-plugin-api": "^2.3.1",
+    "cypress-recurse": "^1.24.0",
+    "cypress": "^13.7.1",
+    "node-xlsx": "^0.21.0"
+  },
+  "devDependencies": {
+    "allure-commandline": "^2.17.2",
+    "gerar-cpf": "^2.0.3",
+    "commitizen": "^4.2.4",
+    "cypress-junit-reporter": "^1.3.1",
+    "cypress-xpath": "^2.0.1",
+    "cz-conventional-changelog": "^3.3.0",
+    "eslint": "^8.16.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-cypress": "^2.12.1",
+    "eslint-plugin-import": "^2.25.3",
+    "eslint-plugin-import-helpers": "^1.2.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "git-cz": "^4.8.0",
+    "husky": "^7.0.4",
+    "inquirer": "^8.2.0",
+    "lint-staged": "^12.3.7",
+    "prettier": "^2.5.1"
+  },
+  "description": "Projeto utiliza o intepretador em node, JavaScript e framework Cypress.",
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "author": ""
+}

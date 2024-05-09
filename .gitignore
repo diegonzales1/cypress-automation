@@ -1,0 +1,7 @@
+cypress/fixtures/filesToTest/*.*
+node_modules
+videos
+screenshots
+results
+results/*.xml
+

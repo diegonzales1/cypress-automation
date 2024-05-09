@@ -1,0 +1,6 @@
+{
+  "baseUrl": "https://br.search.yahoo.com",
+  "env": {
+    "enviroment": "UAT"
+  }
+}

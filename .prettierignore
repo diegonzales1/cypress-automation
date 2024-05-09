@@ -1,0 +1,7 @@
+downloads/
+node_modules/
+screenshots/
+videos/
+allure-results/
+allure-report/
+junit-results/

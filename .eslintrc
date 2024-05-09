@@ -1,0 +1,23 @@
+{
+  "env": {
+    "browser": true,
+    "es2021": true,
+    "cypress/globals": true
+  },
+  "extends": ["airbnb-base", "plugin:prettier/recommended"],
+  "plugins": ["prettier", "cypress"],
+  "parserOptions": {
+    "ecmaVersion": 12,
+    "sourceType": "module"
+  },
+  "rules": {
+    "prettier/prettier": "error",
+    "no-unused-expressions": "off",
+    "import/extensions": "off",
+    "default-param-last": "off",
+    "func-names": "off",
+    "import/prefer-default-export": "off",
+    "import/no-useless-path-segments": "off",
+    "object-shorthand": 0
+  }
+}

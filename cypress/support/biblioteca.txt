@@ -1,0 +1,241 @@
+/* eslint-disable prettier/prettier */
+import { recurse } from 'cypress-recurse'
+import { config } from '../configs'
+import distribuidorFlag from '.../../../cypress/fixtures/edicaoFundo.json'
+import { updateFramingTemplate } from '.../../../cypress/fixtures'
+import 'cypress-plugin-api'
+
+
+Cypress.Commands.add('login', ({ email, password }) => {
+  if (email === config.users.master.email || email === config.users.galgo.email) {
+    cy.contains('Entendi!').click()
+  }
+  cy.get('#redirect-login-button', { timeout: config.timeToWait }).should('be.visible').click()
+  cy.get('#signInName').click().type(email)
+  cy.get('#password').click().type(password, { log: false })
+  cy.get('#next').click()
+})
+
+Cypress.Commands.add('loginUat', ({ email, password }) => {
+  cy.contains('Entendi!').click()
+  cy.get('#redirect-login-button', { timeout: config.timeToWait }).should('be.visible').click()
+  cy.get('#signInName').click().type(email)
+  cy.get('#password').click().type(password, { log: false })
+  cy.get('#next').click()
+})
+
+Cypress.Commands.add('logout', () => {
+  cy.get('#logout-button', { timeout: config.timeToWait }).should('be.visible').click()
+  cy.get('#dialog-button-yes', { timeout: config.timeToWait }).should('be.visible').click()
+  cy.window().then((win) => {
+    win.sessionStorage.clear()
+  })
+})
+
+Cypress.Commands.add('pegaIdBoleta', () => {
+  cy.clicarNoBotao({
+    seletor: 'button[id="order-detail-button"]'
+  })
+
+  cy.get('#add-order-id-border-input')
+    .invoke('val')
+    .then(($value) => {
+      return String($value)
+    })
+})
+
+Cypress.Commands.add(
+  'efetuaRetorno',
+  ({ papel, resposta, codigoMotRecusa, observacao, dtLiq, dtCot, ctOp, vrRes }) => {
+    cy.gerarArquivoRetorno(resposta, codigoMotRecusa, observacao, dtLiq, dtCot, ctOp, vrRes).then(
+      function (arquivoRetorno) {
+        const numero = Math.floor(Math.random() * (100000 - 1)) + 1
+        this.arquivoRetorno = arquivoRetorno
+
+        cy.task('createFile', {
+          fileName: `ret-v${numero}.csv`,
+          content: this.arquivoRetorno
+        })
+
+        cy.contains('.closed-menu', ' Minhas Ações ').click()
+        cy.contains(papel).click()
+        cy.clicarNoBotao({
+          seletor: '#send-return-button'
+        })
+        cy.get('#dialog-billeting-load-drag-drop-zone').selectFile(
+          `${config.pathFilesToTest}\\ret-v${numero}.csv`,
+          {
+            action: 'drag-drop'
+          }
+        )
+        cy.get('#dialog-billeting-load-button-load > .mat-button-wrapper').click()
+
+        cy.task('deleteFile', {
+          fileName: `${config.pathFilesToTest}\\ret-v${numero}.csv`
+        })
+      }
+    )
+  }
+)
+
+Cypress.Commands.add(
+  'gerarArquivoRetorno',
+  (resposta, codigoMotRecusa, observacao, dtLiq, dtCot, ctOp, vrRes) => {
+    cy.pegaIdBoleta().then(function ($value) {
+      const idBoleta = $value
+      const cabecalho =
+        'id_border;resposta;cod_mot_recusa;observacao;data_liquidacao;data_cotizacao;cotas_operacao;vr_resgate\n'
+      const conteudo = `${idBoleta};${resposta};${codigoMotRecusa};${observacao};${dtLiq};${dtCot};${ctOp};${vrRes}`
+      const arquivoRetorno = `${cabecalho}${conteudo}`
+
+      return arquivoRetorno
+    })
+  }
+)
+
+Cypress.Commands.add('efetuaConsumo', ({ papel, statusAtual, statusBoleta }) => {
+  cy.contains('.closed-menu', ' Minhas Ações ').click()
+  cy.contains('#action-tab-button', papel).click()
+
+  cy.wait(2000)
+  cy.contains(
+    'table tbody tr[class="mat-row cdk-row ng-star-inserted"] td[class^="mat-cell cdk-cell cdk-column-status_name mat-column-status_name ng-star-inserted"]',
+    statusAtual
+  )
+
+  cy.get('input[id="textSearch-tabs-action"]').type(statusAtual)
+  cy.wait(3000)
+  cy.clicarNoBotao({
+    seletor: 'mat-checkbox[id="checkbox-select"]'
+  })
+  cy.clicarNoBotao({
+    seletor: '#consume-selected-button'
+  })
+  cy.clicarNoBotao({
+    seletor: '#checkbox-consume > .mat-checkbox-layout'
+  })
+  cy.clicarNoBotao({
+    seletor: '#dialog-disapprove-reason-button-confirm'
+  })
+  cy.get('input[id="textSearch-tabs-action"]').clear()
+  cy.get('#table-action-status-value-0').should('be.visible').and('contain', statusBoleta)
+})
+
+/* Gerador data atual */
+Cypress.Commands.add('gerarDataAtual', () => {
+  const hoje = new Date()
+  const dia = hoje.getDate().toString().padStart(2, '0')
+  const mes = String(hoje.getMonth() + 1).padStart(2, '0')
+  const ano = hoje.getFullYear()
+  const dataAtual = `${dia}/${mes}/${ano}`
+
+  return dataAtual
+})
+
+Cypress.Commands.add('selecionarFluxo', ({ fluxo }) => {
+  cy.clicarNoBotao({
+    seletor: 'div .mat-select[id="header-select-flow-type-input"][role="combobox"]'
+  })
+
+  cy.get('.mat-option[role="option"]').contains(` ${fluxo} `).click()
+})
+
+Cypress.Commands.add('clicarNoBotao', ({ seletor }) => {
+  recurse(
+    () => cy.get(seletor),
+    (selector) => selector.eq(0).click(),
+    {
+      delay: 1000,
+      limit: 5,
+      timeout: 200,
+      log: false,
+      error: `Objeto ${seletor} não encontrado`
+    }
+  )
+})
+
+Cypress.Commands.add('buscarTexto', ({ seletor, texto }) => {
+  recurse(
+    () => cy.get(seletor),
+    (selector) => selector.contains(texto).should('be.visible'),
+    {
+      delay: 1000,
+      limit: 10,
+      timeout: 1000,
+      log: false,
+      error: `Objeto ${seletor} não encontrado`
+    }
+  )
+})
+
+Cypress.Commands.add('limparSessionStorage', () => {
+  cy.window().then((win) => {
+    win.sessionStorage.clear()
+  })
+})
+
+/*            TESTES DE API            */
+
+Cypress.Commands.add('gerarToken_ApiExterna', function () {
+  cy.api({
+    method: 'POST',
+    url: `${config.baseUrlAPI}/authentication/v1/authenticate`,
+    headers: {
+      API_KEY: config.api.apiKey,
+      'Content-Type': 'application/json'
+    },
+    failOnStatusCode: false
+  }).then((response) => {
+    expect(response.status).to.be.equal(200)
+    Cypress.env('tokenExterno', response.body.token)
+    return response.body.token
+  })
+})
+
+Cypress.Commands.add('requestGalgo', function ({ method, url, body }) {
+  cy.api({
+    method,
+    url: `${config.baseUrlAPI}/${url}`,
+    headers: {
+      Authorization: `Bearer ${Cypress.env('tokenExterno')}`,
+      'Content-Type': 'application/json'
+    },
+    body,
+    failOnStatusCode: false
+  })
+})
+
+Cypress.Commands.add('alterarFlagDistribuidorFoF', function ({ status }) {
+  distribuidorFlag[0].has_distributor = status
+
+  cy.requestGalgo({
+    method: 'PUT',
+    url: 'funds/v1/external/maintenance',
+    body: distribuidorFlag
+  }).then((response) => {
+    expect(response.status).to.be.equal(200)
+  })
+})
+
+Cypress.Commands.add('alterarEnquadramentoOnline', function ({ status }) {
+  const newUpdateFrame = updateFramingTemplate
+  newUpdateFrame.funds_framing['16.432.678/0001-83'] = status
+
+  cy.requestGalgo({
+    method: 'PUT',
+    url: 'funds/v1/external/maintenance/framing',
+    body: newUpdateFrame
+  }).then((response) => {
+    expect(response.status).to.be.equal(200)
+  })
+})
+
+Cypress.Commands.add('autenticadorUat', function () {
+  cy.request({
+    method: 'GET',
+    url: 'https://authenticationtest.com/totp/?secret=L57KHCH72OFX25JDIS5IWXLPGVRDXJXE4IKSXIAPBHJNOQTOVHHOKVSQKOGU2PNODXQ4F2OG3CNGLTTP3TYC2LM4F7XWCXDOESDZXN6LFSPOXLZS4IFE4XQ4L7NFLLWU&issuer=BorderPro&algorithm=SHA1&digits=6&period=30'
+  }).then((response) => {
+    expect(response.status).to.be.equal(200)
+    return response.body.code
+  })
+})

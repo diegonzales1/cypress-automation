@@ -16,6 +16,8 @@
     "lint": "eslint . --ext .js --ignore-path .gitignore",
     "open:qa": "cypress open --env configFile=qa",
     "open:uat": "cypress open --env configFile=uat",
+    "run:qa": "cypress run --env configFile=qa",
+    "run:uat": "cypress run --env configFile=uat",
     "cy:run:chrome": "cypress run --browser chrome",
     "cy:run:firefox": "cypress run --browser firefox",
     "cypress:run": "cypress run",

@@ -3,10 +3,18 @@
 declare namespace Cypress {
   interface Chainable {
     /**
+     * Efetua o login no ambiente.
+     *
+     * @see  support/e2e.js
+     * @example cy.login()
+     */
+    login(): Cypress.Chainable<JQuery<HTMLElement>>
+
+    /**
      * Faz scroll até um elemento especificado pelo seletor e clica nele.
      *
      * @param {string} seletor - Seletor que identifica o elemento onde a busca deve ser realizada.
-     * @see  support/validacoesPage.js
+     * @see  support/e2e.js
      *
      * @example cy.darScrollAteBotaoEClicar(#MeuSeletor)
      */
@@ -19,7 +27,7 @@ declare namespace Cypress {
      * @param {string}  seletor - Seletor que identifica o elemento onde a busca deve ser realizada.
      * @param {string}  texto - O texto que se deseja encontrar dentro do elemento.
      *
-     * @see  support/validacoesPage.js
+     * @see  support/e2e.js
      * @example cy.buscarTexto('#meuElemento', 'Texto para buscar')
      */
     buscarTexto(): Cypress.Chainable<JQuery<HTMLElement>>

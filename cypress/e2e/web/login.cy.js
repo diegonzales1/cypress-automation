@@ -11,21 +11,6 @@ describe('Funcionalidade: Login', () => {
     cy.contains('a[href="/login"]', ' Login').click()
   })
 
-  context('Validar campos do cadastro de usuário', () => {
-    it.only('1- Validar campos existentes pada cadastro', () => {
-      const expectedLabels = ['Nome*', 'E-mail*', 'Senha*']
-
-      cy.get('#createAccount').click()
-      cy.get('.account_form h3').contains('Cadastro de usuário').should('be.visible')
-      cy.get('.account_form .default-form-box').each(($formBox) => {
-        cy.wrap($formBox).find('label').should('exist')
-        const labelText = $formBox.find('label').text().trim()
-        expect(expectedLabels).to.include(labelText)
-      })
-      cy.get('#btnRegister').should('have.text', 'Cadastrar')
-    })
-  })
-
   context('Validações dos campos de login', () => {
     it('1- Validar campos existentes para o login', () => {
       cy.get('.account_form').within(() => {

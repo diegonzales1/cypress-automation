@@ -35,13 +35,20 @@ describe('Funcionalidade: Carrinho', () => {
     })
 
     it('Validar limpeza do carrinho', () => {
+     cy.limpeza()
+    })
+
+    it.only('Validar ajuste de tamanho e cor produto', ()=> {
+      cy.limpeza()
+
       cy.get('.has-megaitem > [href="#!"]').trigger('mouseover').then(() => {
-        cy.get('li > a[href="/product-details-two/1"]').should('contain', 'Product Single Two').click({ force: true })
+        cy.get('li > a[href="/product-details-one/1"]').should('contain', 'Product Single').click({ force: true })
       })
-      cy.get('.col-12 > .header-action-link > :nth-child(2) > .offcanvas-toggle > .fa').click()
-      cy.get('.offcanvas-cart-action-button > :nth-child(1) > .theme-btn-one').click()
-      cy.get('.cart_submit > .theme-btn-one').click()
-      cy.get('h2').should('contain','YOUR CART IS EMPTY')
+      cy.get('select').select('XL')
+      cy.get('.product-color-blue').click()
+     
+
+      
     })
   })
 })
